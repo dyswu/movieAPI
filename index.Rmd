@@ -1,0 +1,59 @@
+---
+title: "Actor Analysis"
+author: "Derek Wu"
+date: "2/18/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+#setwd("./")
+source("analysis.R")
+knitr::opts_chunk$set(echo = TRUE)
+actor_name <- "Brad Pitt"
+```
+
+## Brat Pitt Actor Analysis
+
+This is a report with some analysis of trending actors and more in depth analysis of Brad Pitt based on the Movie
+Database API. This report analyzes different actors and their work.
+
+## Trending Actors
+
+This is data on trending actors that comes from the week of `r Sys.Date()-7` to `r Sys.Date()`
+```{r trending, echo=FALSE}
+trending_df <- get_trending_table(key_param)
+kable(trending_df)
+```
+
+## `r actor_name`
+
+
+```{r actor analysis, echo=FALSE}
+actor_data <- get_actor_data(actor_name)
+
+actor_id <- actor_data[2]
+imdb_id <- actor_data[3]
+actor_URL <- paste0("https://www.imdb.com/name/", imdb_id)
+actor_films <- paste("-", actor_data[5], collapse = "\n")
+
+biography <- actor_data[4]
+```
+
+The actor `r actor_name` has the id of `r actor_id`. `r actor_name`'s IMDB page can be found [here](`r actor_URL`). `r biography`. `r actor_name` is known for his work in `r actor_films`.
+
+### `r actor_name` Film Popularity as Director vs Executive Director
+
+```{r brad pitt analysis, echo=FALSE}
+result <- analyze_actor(key_param)
+roles <- result[[1]][1]
+pop <- result[[1]][2]
+vote <- result[[1]][3]
+```
+
+When `r actor_name` works on a film as the `r roles[[1]][1]`, the movie has an average popularity of `r pop[[1]][1]` and average rating of `r vote[[1]][1]`. However, when `r actor_name` works on a movie as the `r roles[[1]][2]`, the movie has an average popularity of `r pop[[1]][2]` and an average rating of `r vote[[1]][2]`. This difference of `r pop[[1]][1] - pop[[1]][2]` popularity and `r vote[[1]][1] - vote[[1]][2]` may be caused by the different amount of experience and help `r actor_name` has in each of these positions.
+
+The raw data used in this calculation is presented below.
+```{r rawdata, echo=FALSE}
+raw <- result[[2]]
+kable(raw)
+```
